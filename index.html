@@ -19,6 +19,27 @@
       overflow: hidden;
     }
 
+    /* Floating hearts */
+    .heart {
+      position: fixed;
+      bottom: -20px;
+      font-size: 20px;
+      animation: floatUp 6s linear forwards;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-120vh) scale(1.5);
+        opacity: 0;
+      }
+    }
+
     .card {
       background: white;
       padding: 40px;
@@ -70,27 +91,25 @@
     <button id="no">No 🙃</button>
   </div>
 
-  <audio id="music" src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-melody-2454.mp3" loop></audio>
-
   <script>
     const noBtn = document.getElementById("no");
     let noCount = 0;
+    let music;
 
+    // 😈 NO button logic
     noBtn.addEventListener("mouseover", () => {
       noCount++;
-
-      // Fake NO logic 😈
       if (noCount > 5) {
         yesClicked();
         return;
       }
-
       const x = Math.random() * (window.innerWidth - 120);
       const y = Math.random() * (window.innerHeight - 60);
       noBtn.style.left = x + "px";
       noBtn.style.top = y + "px";
     });
 
+    // 💖 Heart confetti burst
     function heartConfetti() {
       confetti({
         particleCount: 120,
@@ -101,11 +120,29 @@
       });
     }
 
-    function yesClicked() {
-      const music = document.getElementById("music");
-      music.volume = 0.4;   // soft romantic volume
-      music.play();
+    // 💕 Floating hearts continuously
+    function startFloatingHearts() {
+      setInterval(() => {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerText = "💖";
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.fontSize = 16 + Math.random() * 20 + "px";
+        document.body.appendChild(heart);
 
+        setTimeout(() => heart.remove(), 6000);
+      }, 500);
+    }
+
+    function yesClicked() {
+
+      // 🎶 Music (persistent)
+      if (!music) {
+        music = new Audio("https://assets.mixkit.co/music/preview/mixkit-romantic-piano-melody-2454.mp3");
+        music.loop = true;
+        music.volume = 0.4;
+        music.play();
+      }
 
       document.body.innerHTML = `
         <div style="
@@ -132,8 +169,9 @@
       `;
 
       heartConfetti();
+      startFloatingHearts();
 
-      // Smooth slideshow ✨
+      // 🖼️ Slideshow
       const images = ["./love1.jpg", "./love2.jpg"];
       let index = 0;
       const slider = document.getElementById("slider");
@@ -146,7 +184,7 @@
         slider.classList.add("fade");
       }, 2000);
 
-      // Secret second screen 💌
+      // 💌 Final screen
       setTimeout(() => {
         document.body.innerHTML = `
           <div style="
@@ -164,6 +202,7 @@
           </div>
         `;
         heartConfetti();
+        startFloatingHearts();
       }, 7000);
     }
   </script>
