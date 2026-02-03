@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Valentine 💖</title>
 
-  <!-- Confetti library -->
+  <!-- Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -30,7 +30,7 @@
     }
 
     h1 {
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     button {
@@ -51,28 +51,62 @@
       background: #ccc;
       position: absolute;
     }
+
+    .fade {
+      animation: fade 1s ease-in-out;
+    }
+
+    @keyframes fade {
+      from { opacity: 0.3; }
+      to { opacity: 1; }
+    }
   </style>
 </head>
 <body>
 
   <div class="card">
-    <h1>Pillu, Will you be my Valentine? 💘</h1>
+    <h1>Pillu, will you be my Valentine? 💘</h1>
     <button id="yes" onclick="yesClicked()">Yes 💖</button>
     <button id="no">No 🙃</button>
   </div>
 
+  <audio id="music" src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-melody-2454.mp3" loop></audio>
+
   <script>
     const noBtn = document.getElementById("no");
+    let noCount = 0;
 
     noBtn.addEventListener("mouseover", () => {
+      noCount++;
+
+      // Fake NO logic 😈
+      if (noCount > 5) {
+        yesClicked();
+        return;
+      }
+
       const x = Math.random() * (window.innerWidth - 120);
       const y = Math.random() * (window.innerHeight - 60);
-
       noBtn.style.left = x + "px";
       noBtn.style.top = y + "px";
     });
 
+    function heartConfetti() {
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        shapes: ["heart"],
+        colors: ["#ff4d6d", "#ff8fab"],
+        origin: { y: 0.6 }
+      });
+    }
+
     function yesClicked() {
+      const music = document.getElementById("music");
+      music.volume = 0.4;   // soft romantic volume
+      music.play();
+
+
       document.body.innerHTML = `
         <div style="
           height:100vh;
@@ -80,39 +114,57 @@
           flex-direction:column;
           justify-content:center;
           align-items:center;
+          text-align:center;
           font-family:Arial;
           background:linear-gradient(135deg,#ff9a9e,#fad0c4);
-          text-align:center;
         ">
           <h1>Yayyy 💕 I knew it 😍</h1>
+          <p style="max-width:300px;font-size:18px;">
+            Thank you for choosing me — today and always ❤️
+          </p>
 
           <img id="slider"
-            src="love1.jpg"
-            style="
-              width:260px;
-              margin-top:20px;
-              border-radius:16px;
-              box-shadow:0 10px 25px rgba(0,0,0,0.2);
-            "
+            src="./love1.jpg"
+            class="fade"
+            style="width:260px;margin-top:20px;border-radius:16px;box-shadow:0 10px 25px rgba(0,0,0,0.2);"
           >
         </div>
       `;
 
-      // Confetti burst 🎉
-      confetti({
-        particleCount: 250,
-        spread: 100,
-        origin: { y: 0.6 }
-      });
+      heartConfetti();
 
-      // Slideshow images
-      const images = ["love1.jpg", "love2.jpg"];
+      // Smooth slideshow ✨
+      const images = ["./love1.jpg", "./love2.jpg"];
       let index = 0;
+      const slider = document.getElementById("slider");
 
       setInterval(() => {
         index = (index + 1) % images.length;
-        document.getElementById("slider").src = images[index];
-      }, 1500);
+        slider.classList.remove("fade");
+        void slider.offsetWidth;
+        slider.src = images[index];
+        slider.classList.add("fade");
+      }, 2000);
+
+      // Secret second screen 💌
+      setTimeout(() => {
+        document.body.innerHTML = `
+          <div style="
+            height:100vh;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+            font-family:Arial;
+            background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+          ">
+            <h1>See you on Valentine’s Day 💖</h1>
+            <p>I can’t wait to make memories with you 😌</p>
+          </div>
+        `;
+        heartConfetti();
+      }, 7000);
     }
   </script>
 
